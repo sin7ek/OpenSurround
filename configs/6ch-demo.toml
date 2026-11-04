@@ -1,0 +1,43 @@
+# OpenSurround PoC config - 5.1 surround (ITU-R BS.775 order)
+# Source WAV channel order (see tools/make_test_wav_6ch.py):
+#   0 L   (Dolby FL)    1 R  (FR)    2 C  (C)    3 LFE (LFE)
+#   4 Ls  (Dolby SL)    5 Rs (SR)
+
+[server]
+name = "OpenSurround PoC"
+host = "YOUR_HOST_IP"
+port = 8927
+auto_trust_unpaired = true   # trusted-LAN test only!
+# Keep false for lab testing: persisted pairing records make unencrypted
+# transition-mode clients (Kiosk Satellite) get rejected on the next run.
+persist_pairings = false
+
+[audio]
+chunk_ms = 20
+# How far ahead of real-time the server streams before pacing kicks in.
+# Higher = more robust against Wi-Fi jitter, but more end-to-end latency.
+buffer_lead_ms = 1000
+
+# --- Front L/R (ITU: L/R, Dolby: FL/FR) ---
+[endpoints.front]
+match_name = "DEVICE_A"
+source_channels = [0, 1]
+gain_db = 0.0     # -12 .. +12 typical; clips at 0 dBFS
+delay_ms = 0.0    # positive only; shifts this endpoint later on the shared timeline
+
+# --- Center + LFE (ITU: C + LFE, Dolby: C + LFE) ---
+# LFE is a line-level signal: a phone speaker cannot reproduce it and a real
+# sub needs its own amplifier/crossover (bass management, see README roadmap).
+# Expect the LFE test tone to be (nearly) inaudible on the Mi A1 speaker.
+[endpoints.center-sub]
+match_name = "DEVICE_B"
+source_channels = [2, 3]
+gain_db = 0.0    # conservative: center typically plays hotter in mixes
+delay_ms = 0.0
+
+# --- Surround L/R (ITU: Ls/Rs, Dolby: SL/SR) ---
+[endpoints.rear]
+match_name = "DEVICE_C"
+source_channels = [4, 5]
+gain_db = 0.0
+delay_ms = 0.0

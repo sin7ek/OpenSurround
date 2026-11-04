@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opensurround"
+version = "0.0.2"
+description = "Open multichannel PCM routing to Sendspin clients on one synchronized timeline"
+requires-python = ">=3.12"
+dependencies = [
+  "aiosendspin[server] @ https://github.com/Sendspin/aiosendspin/archive/611ca195f4ef965c7451cc10b54c150caca12f9c.zip",
+  "numpy>=1.26",
+]
+
+[project.scripts]
+opensurround = "opensurround.cli:main"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opensurround"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
